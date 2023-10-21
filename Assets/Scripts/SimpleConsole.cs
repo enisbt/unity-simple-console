@@ -96,7 +96,11 @@ public class SimpleConsole : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             string[] tokenizedCommand = commandInputField.text.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
-            if (tokenizedCommand.Length == 0) { return; }
+            if (tokenizedCommand.Length == 0)
+            {
+                ClearInputField();
+                return;
+            }
 
             int commandIndex = 0;
             bool isCommandExists = false;
@@ -109,11 +113,19 @@ public class SimpleConsole : MonoBehaviour
                     commandIndex = i;
                 }
             }
-            if (!isCommandExists) { return; }
+            if (!isCommandExists)
+            {
+                ClearInputField();
+                return;
+            }
 
             Command command = consoleMethods[commandIndex];
             ParameterInfo[] parameters = command.methodInfo.GetParameters();
-            if (parameters.Length != tokenizedCommand.Length - 1) { return; }
+            if (parameters.Length != tokenizedCommand.Length - 1)
+            {
+                ClearInputField();
+                return;
+            }
 
             if (parameters.Length == 0)
             {
@@ -129,6 +141,14 @@ public class SimpleConsole : MonoBehaviour
 
                 command.methodInfo.Invoke(command.commandObject, args);
             }
+
+            ClearInputField();
         }
+    }
+
+    private void ClearInputField()
+    {
+        commandInputField.text = "";
+        commandInputField.ActivateInputField();
     }
 }
