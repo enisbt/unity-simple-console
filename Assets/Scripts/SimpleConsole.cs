@@ -86,6 +86,7 @@ public class SimpleConsole : MonoBehaviour
 
             if (consolePanel.activeSelf)
             {
+                ClearInputField();
                 commandInputField.ActivateInputField();
             }
         }
