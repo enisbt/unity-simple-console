@@ -21,10 +21,16 @@ public class Command
 public class SimpleConsole : MonoBehaviour
 {
     [SerializeField] KeyCode consoleKey = KeyCode.BackQuote;
-    
+
     GameObject consolePanel;
     List<Command> consoleMethods = new List<Command>();
+    List<string> history = new List<string>() { "" };
     TMP_InputField commandInputField;
+
+    string tempCommand = "";
+    int historyIndex = 0;
+
+    bool historyActive = false;
 
     private void Start()
     {
@@ -46,6 +52,7 @@ public class SimpleConsole : MonoBehaviour
         if (consolePanel.activeSelf)
         {
             ListenCommands();
+            HandleHistory();
         }
     }
 
@@ -143,7 +150,39 @@ public class SimpleConsole : MonoBehaviour
                 command.methodInfo.Invoke(command.commandObject, args);
             }
 
+            history.Add(commandInputField.text);
             ClearInputField();
+        }
+    }
+
+    private void HandleHistory()
+    {
+        if (history.Count > 0)
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (!historyActive)
+                {
+                    tempCommand = commandInputField.text;
+                }
+                historyIndex = Math.Min(historyIndex + 1, history.Count - 1);
+                commandInputField.text = history[historyIndex];
+                commandInputField.stringPosition = commandInputField.text.Length;
+                historyActive = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                historyIndex = Math.Max(historyIndex - 1, 0);
+                commandInputField.text = history[historyIndex];
+                commandInputField.stringPosition = commandInputField.text.Length;
+
+                if (historyIndex == 0 && historyActive)
+                {
+                    historyActive = false;
+                    commandInputField.text = tempCommand;
+                    commandInputField.stringPosition = commandInputField.text.Length;
+                }
+            }
         }
     }
 
@@ -151,5 +190,8 @@ public class SimpleConsole : MonoBehaviour
     {
         commandInputField.text = "";
         commandInputField.ActivateInputField();
+        historyIndex = 0;
+        tempCommand = "";
+        historyActive = false;
     }
 }
