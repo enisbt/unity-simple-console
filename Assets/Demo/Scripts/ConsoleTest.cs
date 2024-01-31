@@ -25,4 +25,16 @@ public class ConsoleTest : MonoBehaviour
     {
         Debug.Log("testing");
     }
+
+    [ConsoleCommand]
+    public void TestConsoleWarning()
+    {
+        Debug.LogWarning("Warning log command");
+    }
+
+    [ConsoleCommand]
+    public void TestConsoleError()
+    {
+        Debug.LogError("Error log command");
+    }
 }

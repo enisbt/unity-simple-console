@@ -214,6 +214,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2132315155}
     m_Modifications:
+    - target: {fileID: 782921002, guid: 6a5ddb7924bc95143a33d434a1f9e740, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4712344968211027686, guid: 6a5ddb7924bc95143a33d434a1f9e740, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -443,7 +447,11 @@ MonoBehaviour:
     - TestConsoleCommandWithArgs
     string int float bool
 
-    - testCommand'
+    - testCommand
+
+    - TestConsoleWarning
+
+    - TestConsoleError'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

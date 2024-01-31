@@ -20,22 +20,40 @@ public class Command
 
 public class SimpleConsole : MonoBehaviour
 {
+    [SerializeField] Color errorColor;
+    [SerializeField] Color warningColor;
+    [SerializeField] Color logColor;
     [SerializeField] KeyCode consoleKey = KeyCode.BackQuote;
+    [SerializeField] GameObject consoleLogTextPrefab;
 
     GameObject consolePanel;
     List<Command> consoleMethods = new List<Command>();
     List<string> history = new List<string>() { "" };
     TMP_InputField commandInputField;
+    Transform contentTransform;
+    Transform scrollRectTransform;
 
     string tempCommand = "";
     int historyIndex = 0;
 
     bool historyActive = false;
 
+    private void OnEnable()
+    {
+        Application.logMessageReceived += HandleLog;
+    }
+
+    private void OnDisable()
+    {
+        Application.logMessageReceived -= HandleLog;
+    }
+
     private void Start()
     {
         consolePanel = transform.Find("Console Panel").gameObject;
         commandInputField = consolePanel.transform.Find("Input Field").GetComponent<TMP_InputField>();
+        scrollRectTransform = consolePanel.transform.Find("Log Window");
+        contentTransform = scrollRectTransform.Find("Mask").Find("Content");
 
         if (consolePanel.activeSelf)
         {
@@ -193,5 +211,30 @@ public class SimpleConsole : MonoBehaviour
         historyIndex = 0;
         tempCommand = "";
         historyActive = false;
+    }
+
+    private void HandleLog(string logString, string stackTrace, LogType type)
+    {
+        GameObject consoleLogText = Instantiate(consoleLogTextPrefab, contentTransform);
+        TMP_Text textObject = consoleLogText.GetComponent<TMP_Text>();
+
+        if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+        {
+            textObject.color = errorColor;
+            textObject.text = "> " + logString;
+            textObject.text += "\n" + stackTrace;
+        }
+        else if (type == LogType.Warning)
+        {
+            textObject.color = warningColor;
+            textObject.text = "> " + logString;
+        }
+        else
+        {
+            textObject.color = logColor;
+            textObject.text = "> " + logString;
+        }
+
+        scrollRectTransform.GetComponent<ContentScroller>().AdjustContent();
     }
 }
