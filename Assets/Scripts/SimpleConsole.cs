@@ -9,12 +9,14 @@ public class Command
     public string name;
     public MethodInfo methodInfo;
     public object commandObject;
+    public string help;
 
-    public Command(string name, MethodInfo methodInfo, object commandObject)
+    public Command(string name, MethodInfo methodInfo, object commandObject, string help)
     {
         this.name = name;
         this.methodInfo = methodInfo;
         this.commandObject = commandObject;
+        this.help = help;
     }
 }
 
@@ -87,17 +89,8 @@ public class SimpleConsole : MonoBehaviour
                 if (attributes.Length > 0)
                 {
                     ConsoleCommand command = (ConsoleCommand)attributes[0];
-                    string methodName;
-                    if (command.alias != null)
-                    {
-                        methodName = command.alias;
-                    }
-                    else
-                    {
-                        methodName = mInfos[j].Name;
-                    }
-
-                    consoleMethods.Add(new Command(methodName, mInfos[j], objects[i]));
+                    string methodName = command.alias ?? mInfos[j].Name;
+                    consoleMethods.Add(new Command(methodName, mInfos[j], objects[i], command.help));
                 }
             }
         }
@@ -236,5 +229,34 @@ public class SimpleConsole : MonoBehaviour
         }
 
         scrollRectTransform.GetComponent<ContentScroller>().AdjustContent();
+    }
+
+    [ConsoleCommand("available-commands", "Lists all available commands")]
+    public void AvailableCommands()
+    {
+        string output = "";
+
+        for (int i = 0; i < consoleMethods.Count; i++)
+        {
+            output += consoleMethods[i].name;
+            ParameterInfo[] parameters = consoleMethods[i].methodInfo.GetParameters();
+            if (parameters.Length > 0)
+            {
+                output += " -";
+                for (int j = 0; j < parameters.Length; j++)
+                {
+                    output += " " + parameters[j].ParameterType.Name;
+                }
+            }
+
+            if (consoleMethods[i].help != null)
+            {
+                output += " - " + consoleMethods[i].help;
+            }
+            
+            output += "\n";
+        }
+
+        Debug.Log(output);
     }
 }

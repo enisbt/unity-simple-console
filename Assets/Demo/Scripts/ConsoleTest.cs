@@ -8,7 +8,7 @@ public class ConsoleTest : MonoBehaviour
         Debug.Log("testing");
     }
 
-    [ConsoleCommand]
+    [ConsoleCommand(help: "Command with args helper string")]
     public void TestConsoleCommandWithArgs(string argument, int number, float floatNumber, bool boolVar)
     {
         if (boolVar)
@@ -26,7 +26,7 @@ public class ConsoleTest : MonoBehaviour
         Debug.Log("testing");
     }
 
-    [ConsoleCommand]
+    [ConsoleCommand(help: "Test Helper String")]
     public void TestConsoleWarning()
     {
         Debug.LogWarning("Warning log command");

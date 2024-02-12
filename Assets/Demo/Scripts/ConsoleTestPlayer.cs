@@ -17,7 +17,7 @@ public class ConsoleTestPlayer : MonoBehaviour
         healthText.text = "Player Health: " + health.ToString();
     }
 
-    [ConsoleCommand]
+    [ConsoleCommand(help: "Deal damage to the player")]
     public void DealDamage(int damage)
     {
         health = Mathf.Max(health - damage, 0);
