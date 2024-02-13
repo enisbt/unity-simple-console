@@ -172,27 +172,35 @@ public class SimpleConsole : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (!historyActive)
+                if (historyActive)
+                {
+                    historyIndex = Math.Min(historyIndex + 1, history.Count - 1);
+                }
+                else
                 {
                     tempCommand = commandInputField.text;
+                    historyIndex = 1;
                 }
-                historyIndex = Math.Min(historyIndex + 1, history.Count - 1);
-                commandInputField.text = history[historyIndex];
-                commandInputField.stringPosition = commandInputField.text.Length;
+
                 historyActive = true;
+                commandInputField.text = history[history.Count - historyIndex];
+                commandInputField.stringPosition = commandInputField.text.Length;
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                historyIndex = Math.Max(historyIndex - 1, 0);
-                commandInputField.text = history[historyIndex];
-                commandInputField.stringPosition = commandInputField.text.Length;
+                if (!historyActive) { return; }
 
-                if (historyIndex == 0 && historyActive)
+                historyIndex = Math.Max(historyIndex - 1, 0);
+                if (historyIndex == 0)
                 {
                     historyActive = false;
                     commandInputField.text = tempCommand;
                     commandInputField.stringPosition = commandInputField.text.Length;
+                    return;
                 }
+
+                commandInputField.text = history[history.Count - historyIndex];
+                commandInputField.stringPosition = commandInputField.text.Length;
             }
         }
     }
