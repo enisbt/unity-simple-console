@@ -120,49 +120,43 @@ public class SimpleConsole : MonoBehaviour
                 ClearInputField();
                 return;
             }
-
-            int commandIndex = 0;
-            bool isCommandExists = false;
-            for (int i = 0; i < consoleMethods.Count; i++)
-            {
-                isCommandExists = consoleMethods[i].name == tokenizedCommand[0] || isCommandExists;
-
-                if (consoleMethods[i].name == tokenizedCommand[0])
-                {
-                    commandIndex = i;
-                }
-            }
-            if (!isCommandExists)
-            {
-                ClearInputField();
-                return;
-            }
-
-            Command command = consoleMethods[commandIndex];
-            ParameterInfo[] parameters = command.methodInfo.GetParameters();
-            if (parameters.Length != tokenizedCommand.Length - 1)
-            {
-                ClearInputField();
-                return;
-            }
-
-            if (parameters.Length == 0)
-            {
-                command.methodInfo.Invoke(command.commandObject, null);
-            }
-            else
-            {
-                object[] args = new object[parameters.Length];
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    args[i] = Convert.ChangeType(tokenizedCommand[i + 1], parameters[i].ParameterType);
-                }
-
-                command.methodInfo.Invoke(command.commandObject, args);
-            }
-
+            
             history.Add(commandInputField.text);
             ClearInputField();
+
+            List<Command> commands = new List<Command>();
+            for (int i = 0; i < consoleMethods.Count; i++)
+            {
+                if (consoleMethods[i].name == tokenizedCommand[0])
+                {
+                    commands.Add(consoleMethods[i]);
+                }
+            }
+
+            if (commands.Count == 0)
+            {
+                Debug.LogError(tokenizedCommand[0] + " - Command not found");
+                return;
+            }
+
+            for (int i = 0; i < commands.Count; i++)
+            {
+                ParameterInfo[] parameters = commands[i].methodInfo.GetParameters();
+                if (parameters.Length == 0)
+                {
+                    commands[i].methodInfo.Invoke(commands[i].commandObject, null);
+                }
+                else
+                {
+                    object[] args = new object[parameters.Length];
+                    for (int j = 0; j < parameters.Length; j++)
+                    {
+                        args[j] = Convert.ChangeType(tokenizedCommand[j + 1], parameters[j].ParameterType);
+                    }
+
+                    commands[i].methodInfo.Invoke(commands[i].commandObject, args);
+                }
+            }
         }
     }
 
